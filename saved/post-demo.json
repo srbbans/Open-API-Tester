@@ -1,0 +1,43 @@
+{
+  "name": "Post - demo",
+  "filename": "post-demo.json",
+  "createdAt": "2026-03-12T03:58:54.619Z",
+  "updatedAt": "2026-03-12T04:11:49.931Z",
+  "request": {
+    "url": "\thttps://dummy.restapiexample.com/api/v1/create",
+    "method": "POST",
+    "headers": {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    "body": {
+      "name": "test",
+      "salary": "123",
+      "age": "23"
+    }
+  },
+  "expectations": {
+    "baseline": 200,
+    "fieldRemoved": 400,
+    "fieldNull": 400,
+    "fieldEmpty": 400,
+    "wrongType": 400,
+    "extraField": 200,
+    "emptyBody": 400,
+    "arrayEmpty": 400,
+    "arrayWrongType": 400,
+    "boundaryValue": 400,
+    "sqlInjection": 400,
+    "xssPayload": 400
+  },
+  "fieldOverrides": {},
+  "mutationConfig": {
+    "fieldRemoved": true,
+    "fieldNull": true,
+    "fieldEmpty": true,
+    "wrongType": true,
+    "extraField": true,
+    "arrayMutations": true,
+    "edgeCases": true
+  }
+}

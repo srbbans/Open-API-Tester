@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Unit Test Report - http://beta4-phoenixmobileapis.d2h.com/api/AppTechnician/LMSGetTechnicianDashboardData</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f172a;--surface:#1e293b;--surface2:#334155;--border:#475569;--text:#e2e8f0;--text2:#94a3b8;--green:#22c55e;--red:#ef4444;--yellow:#eab308;--blue:#3b82f6;--purple:#a855f7;--cyan:#06b6d4;--orange:#f97316}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:0}
+.container{max-width:1400px;margin:0 auto;padding:20px}
+header{background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);border-bottom:1px solid var(--border);padding:24px 0}
+header .container{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.logo{font-size:22px;font-weight:700;color:var(--cyan)}
+.logo span{color:var(--text2);font-weight:400;font-size:14px;margin-left:8px}
+.meta{display:flex;gap:20px;font-size:13px;color:var(--text2)}
+.meta-item{display:flex;align-items:center;gap:6px}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin:24px 0}
+.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center}
+.summary-card .value{font-size:36px;font-weight:700;margin:4px 0}
+.summary-card .label{font-size:13px;color:var(--text2);text-transform:uppercase;letter-spacing:1px}
+.summary-card.pass .value{color:var(--green)}
+.summary-card.fail .value{color:var(--red)}
+.summary-card.total .value{color:var(--blue)}
+.summary-card.time .value{color:var(--yellow);font-size:28px}
+.progress-bar{height:8px;background:var(--surface2);border-radius:4px;margin:24px 0;overflow:hidden;display:flex}
+.progress-bar .pass-fill{background:var(--green);transition:width 0.5s}
+.progress-bar .fail-fill{background:var(--red);transition:width 0.5s}
+.controls{display:flex;gap:12px;margin:20px 0;flex-wrap:wrap;align-items:center}
+.controls select,.controls input{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:8px;font-size:14px;outline:none}
+.controls select:focus,.controls input:focus{border-color:var(--cyan)}
+.controls .count{margin-left:auto;color:var(--text2);font-size:13px}
+.btn{padding:8px 18px;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:8px;cursor:pointer;font-size:13px;transition:all 0.2s}
+.btn:hover{background:var(--surface2);border-color:var(--cyan)}
+.btn.active{background:var(--cyan);color:var(--bg);border-color:var(--cyan)}
+
+.category-section{margin:16px 0}
+.category-header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;cursor:pointer;user-select:none;margin-bottom:2px}
+.category-header:hover{border-color:var(--cyan)}
+.category-header .arrow{transition:transform 0.2s;color:var(--text2)}
+.category-header.open .arrow{transform:rotate(90deg)}
+.category-header .cat-name{font-weight:600;flex:1}
+.category-header .cat-stats{display:flex;gap:12px;font-size:13px}
+.cat-pass{color:var(--green)}
+.cat-fail{color:var(--red)}
+
+.results-table{width:100%;border-collapse:collapse}
+.results-table th{text-align:left;padding:10px 14px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--text2);border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0}
+.results-table td{padding:10px 14px;border-bottom:1px solid rgba(71,85,105,0.3);font-size:14px;vertical-align:top}
+.results-table tr{cursor:pointer;transition:background 0.15s}
+.results-table tr:hover{background:rgba(51,65,85,0.5)}
+.results-table tr.expanded{background:var(--surface)}
+
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.badge.pass{background:rgba(34,197,94,0.15);color:var(--green)}
+.badge.fail{background:rgba(239,68,68,0.15);color:var(--red)}
+.badge.error{background:rgba(249,115,22,0.15);color:var(--orange)}
+.badge.category{background:rgba(168,85,247,0.15);color:var(--purple)}
+.status-code{font-family:'Fira Code',monospace;font-weight:600}
+.status-code.s2xx{color:var(--green)}
+.status-code.s4xx{color:var(--yellow)}
+.status-code.s5xx{color:var(--red)}
+.status-code.s0{color:var(--orange)}
+
+.detail-panel{background:var(--bg);border:1px solid var(--border);border-radius:8px;margin:4px 14px 12px;padding:16px;display:none}
+.detail-panel.show{display:block}
+.detail-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:12px}
+.detail-tab{padding:8px 16px;cursor:pointer;font-size:13px;color:var(--text2);border-bottom:2px solid transparent;transition:all 0.2s}
+.detail-tab:hover{color:var(--text)}
+.detail-tab.active{color:var(--cyan);border-bottom-color:var(--cyan)}
+.detail-content{display:none}
+.detail-content.active{display:block}
+pre.json{background:var(--surface);padding:14px;border-radius:8px;overflow-x:auto;font-size:13px;font-family:'Fira Code','Cascadia Code',monospace;line-height:1.5;max-height:400px;overflow-y:auto;white-space:pre-wrap;word-break:break-word}
+.diff-add{color:var(--green);background:rgba(34,197,94,0.1)}
+.diff-remove{color:var(--red);background:rgba(239,68,68,0.1)}
+
+.request-info{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin:20px 0}
+.request-info h3{color:var(--cyan);margin-bottom:12px;font-size:16px}
+.req-method{display:inline-block;padding:4px 12px;border-radius:6px;font-weight:700;font-size:13px;margin-right:8px}
+.req-method.GET{background:rgba(34,197,94,0.2);color:var(--green)}
+.req-method.POST{background:rgba(59,130,246,0.2);color:var(--blue)}
+.req-method.PUT{background:rgba(234,179,8,0.2);color:var(--yellow)}
+.req-method.DELETE{background:rgba(239,68,68,0.2);color:var(--red)}
+.req-method.PATCH{background:rgba(168,85,247,0.2);color:var(--purple)}
+.req-url{font-family:monospace;color:var(--text);word-break:break-all}
+
+.no-results{text-align:center;padding:60px;color:var(--text2);font-size:16px}
+@media(max-width:768px){
+  .summary-grid{grid-template-columns:1fr 1fr}
+  .controls{flex-direction:column}
+  .controls .count{margin-left:0}
+  header .container{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="logo">API Unit Test Report <span>v1.0</span></div>
+    <div class="meta">
+      <div class="meta-item" id="reportTime"></div>
+      <div class="meta-item" id="reportDuration"></div>
+    </div>
+  </div>
+</header>
+
+<div class="container" id="app">
+  <div id="requestInfo"></div>
+  <div class="summary-grid" id="summaryGrid"></div>
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="controls" id="controls"></div>
+  <div id="resultsContainer"></div>
+</div>
+
+<script>
+const REPORT_DATA = {
+  "results": [
+    {
+      "id": "mut-1",
+      "category": "baseline",
+      "description": "Original request body (baseline)",
+      "fieldPath": null,
+      "expectedStatus": 200,
+      "actualStatus": 200,
+      "statusText": "OK",
+      "pass": true,
+      "requestUrl": "http://beta4-phoenixmobileapis.d2h.com/api/AppTechnician/LMSGetTechnicianDashboardData",
+      "requestMethod": "POST",
+      "requestHeaders": {
+        "Accept": "application/json",
+        "APP_TYPE_ID": "16",
+        "ENTITYID": "964575",
+        "OTP": "711815",
+        "Authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBUFBfVFlQRV9JRCI6IjE2IiwiVVNFUklEIjoiMCIsIk9UUCI6IjcxMTgxNSIsIm5iZiI6MTc3MzIwOTU0NiwiZXhwIjoxNzczMjEwNDQ2LCJpYXQiOjE3NzMyMDk1NDYsImlzcyI6IkRpc2hPVFQiLCJhdWQiOiJEaXNoT1RUIn0.eCUCQJfxbzV2d4dX18J7hmsS2GwIcrGCj4PdwwVGkKI",
+        "APP_VERSION": "5.9.2",
+        "Content-Type": "application/json"
+      },
+      "mutatedBody": {
+        "InputData": "zv1rKMz2MwNAVKuvzza8wkD3tRVaHR34WwyaRJKDeLpbvdhjZbYZaHwZMb8v85NIn"
+      },
+      "responseBody": "1tFUaUeSj1pdTiKPfyy76tSGEeuhZbHnCRiSLDE5mir+C0PCDZBi2amiSuV0kT51kSXSXjEZgKvcdhAl0SQ//YolxEHK66hq7Cofu05NwtvwpJxBewel3i4L+XXsyaT96aSD+r9cUMFQvvVgfmqyp47Zj9f1w5auFXz2hYjj/LFnpCM3EvoqhewCfCOIayOs1Jzn4joC2GNuOzMqLjxTuw==",
+      "rawResponseBody": "\"1tFUaUeSj1pdTiKPfyy76tSGEeuhZbHnCRiSLDE5mir+C0PCDZBi2amiSuV0kT51kSXSXjEZgKvcdhAl0SQ//YolxEHK66hq7Cofu05NwtvwpJxBewel3i4L+XXsyaT96aSD+r9cUMFQvvVgfmqyp47Zj9f1w5auFXz2hYjj/LFnpCM3EvoqhewCfCOIayOs1Jzn4joC2GNuOzMqLjxTuw==\"",
+      "responseHeaders": {
+        "cache-control": "no-cache",
+        "content-length": "218",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Wed, 11 Mar 2026 06:25:19 GMT",
+        "expires": "-1",
+        "permissions-policy": "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()",
+        "pragma": "no-cache",
+        "referrer-policy": "no-referrer",
+        "strict-transport-security": "max-age=31536000;",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN",
+        "x-permitted-cross-domain-policies": "none",
+        "x-xss-protection": "1; mode=block"
+      },
+      "elapsed": 23,
+      "error": null
+    },
+    {
+      "id": "mut-2",
+      "category": "fieldRemoved",
+      "description": "Remove field \"InputData\"",
+      "fieldPath": "InputData",
+      "expectedStatus": 400,
+      "actualStatus": 200,
+      "statusText": "OK",
+      "pass": false,
+      "requestUrl": "http://beta4-phoenixmobileapis.d2h.com/api/AppTechnician/LMSGetTechnicianDashboardData",
+      "requestMethod": "POST",
+      "requestHeaders": {
+        "Accept": "application/json",
+        "APP_TYPE_ID": "16",
+        "ENTITYID": "964575",
+        "OTP": "711815",
+        "Authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBUFBfVFlQRV9JRCI6IjE2IiwiVVNFUklEIjoiMCIsIk9UUCI6IjcxMTgxNSIsIm5iZiI6MTc3MzIwOTU0NiwiZXhwIjoxNzczMjEwNDQ2LCJpYXQiOjE3NzMyMDk1NDYsImlzcyI6IkRpc2hPVFQiLCJhdWQiOiJEaXNoT1RUIn0.eCUCQJfxbzV2d4dX18J7hmsS2GwIcrGCj4PdwwVGkKI",
+        "APP_VERSION": "5.9.2",
+        "Content-Type": "application/json"
+      },
+      "mutatedBody": {},
+      "responseBody": "1tFUaUeSj1pdTiKPfyy76tSGEeuhZbHnCRiSLDE5mir+C0PCDZBi2amiSuV0kT51kSXSXjEZgKvcdhAl0SQ//YolxEHK66hq7Cofu05NwtvwpJxBewel3i4L+XXsyaT96aSD+r9cUMFQvvVgfmqyp47Zj9f1w5auFXz2hYjj/LFnpCM3EvoqhewCfCOIayOs1Jzn4joC2GNuOzMqLjxTuw==",
+      "rawResponseBody": "\"1tFUaUeSj1pdTiKPfyy76tSGEeuhZbHnCRiSLDE5mir+C0PCDZBi2amiSuV0kT51kSXSXjEZgKvcdhAl0SQ//YolxEHK66hq7Cofu05NwtvwpJxBewel3i4L+XXsyaT96aSD+r9cUMFQvvVgfmqyp47Zj9f1w5auFXz2hYjj/LFnpCM3EvoqhewCfCOIayOs1Jzn4joC2GNuOzMqLjxTuw==\"",
+      "responseHeaders": {
+        "cache-control": "no-cache",
+        "content-length": "218",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Wed, 11 Mar 2026 06:25:19 GMT",
+        "expires": "-1",
+        "permissions-policy": "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()",
+        "pragma": "no-cache",
+        "referrer-policy": "no-referrer",
+        "strict-transport-security": "max-age=31536000;",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN",
+        "x-permitted-cross-domain-policies": "none",
+        "x-xss-protection": "1; mode=block"
+      },
+      "elapsed": 21,
+      "error": null
+    },
+    {
+      "id": "mut-3",
+      "category": "fieldNull",
+      "description": "Set \"InputData\" to null",
+      "fieldPath": "InputData",
+      "expectedStatus": 400,
+      "actualStatus": 200,
+      "statusText": "OK",
+      "pass": false,
+      "requestUrl": "http://beta4-phoenixmobileapis.d2h.com/api/AppTechnician/LMSGetTechnicianDashboardData",
+      "requestMethod": "POST",
+      "requestHeaders": {
+        "Accept": "application/json",
+        "APP_TYPE_ID": "16",
+        "ENTITYID": "964575",
+        "OTP": "711815",
+        "Authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBUFBfVFlQRV9JRCI6IjE2IiwiVVNFUklEIjoiMCIsIk9UUCI6IjcxMTgxNSIsIm5iZiI6MTc3MzIwOTU0NiwiZXhwIjoxNzczMjEwNDQ2LCJpYXQiOjE3NzMyMDk1NDYsImlzcyI6IkRpc2hPVFQiLCJhdWQiOiJEaXNoT1RUIn0.eCUCQJfxbzV2d4dX18J7hmsS2GwIcrGCj4PdwwVGkKI",
+        "APP_VERSION": "5.9.2",
+        "Content-Type": "application/json"
+      },
+      "mutatedBody": {
+        "InputData": null
+      },
+      "responseBody": "1tFUaUeSj1pdTiKPfyy76tSGEeuhZbHnCRiSLDE5mir+C0PCDZBi2amiSuV0kT51kSXSXjEZgKvcdhAl0SQ//YolxEHK66hq7Cofu05NwtvwpJxBewel3i4L+XXsyaT96aSD+r9cUMFQvvVgfmqyp47Zj9f1w5auFXz2hYjj/LFnpCM3EvoqhewCfCOIayOs1Jzn4joC2GNuOzMqLjxTuw==",
+      "rawResponseBody": "\"1tFUaUeSj1pdTiKPfyy76tSGEeuhZbHnCRiSLDE5mir+C0PCDZBi2amiSuV0kT51kSXSXjEZgKvcdhAl0SQ//YolxEHK66hq7Cofu05NwtvwpJxBewel3i4L+XXsyaT96aSD+r9cUMFQvvVgfmqyp47Zj9f1w5auFXz2hYjj/LFnpCM3EvoqhewCfCOIayOs1Jzn4joC2GNuOzMqLjxTuw==\"",
+      "responseHeaders": {
+        "cache-control": "no-cache",
+        "content-length": "218",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Wed, 11 Mar 2026 06:25:19 GMT",
+        "expires": "-1",
+        "permissions-policy": "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()",
+        "pragma": "no-cache",
+        "referrer-policy": "no-referrer",
+        "strict-transport-security": "max-age=31536000;",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN",
+        "x-permitted-cross-domain-policies": "none",
+        "x-xss-protection": "1; mode=block"
+      },
+      "elapsed": 28,
+      "error": null
+    },
+    {
+      "id": "mut-4",
+      "category": "fieldEmpty",
+      "description": "Set \"InputData\" to empty (\"\")",
+      "fieldPath": "InputData",
+      "expectedStatus": 400,
+      "actualStatus": 200,
+      "statusText": "OK",
+      "pass": false,
+      "requestUrl": "http://beta4-phoenixmobileapis.d2h.com/api/AppTechnician/LMSGetTechnicianDashboardData",
+      "requestMethod": "POST",
+      "requestHeaders": {
+        "Accept": "application/json",
+        "APP_TYPE_ID": "16",
+        "ENTITYID": "964575",
+        "OTP": "711815",
+        "Authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBUFBfVFlQRV9JRCI6IjE2IiwiVVNFUklEIjoiMCIsIk9UUCI6IjcxMTgxNSIsIm5iZiI6MTc3MzIwOTU0NiwiZXhwIjoxNzczMjEwNDQ2LCJpYXQiOjE3NzMyMDk1NDYsImlzcyI6IkRpc2hPVFQiLCJhdWQiOiJEaXNoT1RUIn0.eCUCQJfxbzV2d4dX18J7hmsS2GwIcrGCj4PdwwVGkKI",
+        "APP_VERSION": "5.9.2",
+        "Content-Type": "application/json"
+      },
+      "mutatedBody": {
+        "InputData": ""
+      },
+      "responseBody": "1tFUaUeSj1pdTiKPfyy76tSGEeuhZbHnCRiSLDE5mir+C0PCDZBi2amiSuV0kT51kSXSXjEZgKvcdhAl0SQ//YolxEHK66hq7Cofu05NwtvwpJxBewel3i4L+XXsyaT96aSD+r9cUMFQvvVgfmqyp47Zj9f1w5auFXz2hYjj/LFnpCM3EvoqhewCfCOIayOs1Jzn4joC2GNuOzMqLjxTuw==",
+      "rawResponseBody": "\"1tFUaUeSj1pdTiKPfyy76tSGEeuhZbHnCRiSLDE5mir+C0PCDZBi2amiSuV0kT51kSXSXjEZgKvcdhAl0SQ//YolxEHK66hq7Cofu05NwtvwpJxBewel3i4L+XXsyaT96aSD+r9cUMFQvvVgfmqyp47Zj9f1w5auFXz2hYjj/LFnpCM3EvoqhewCfCOIayOs1Jzn4joC2GNuOzMqLjxTuw==\"",
+      "responseHeaders": {
+        "cache-control": "no-cache",
+        "content-length": "218",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Wed, 11 Mar 2026 06:25:19 GMT",
+        "expires": "-1",
+        "permissions-policy": "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()",
+        "pragma": "no-cache",
+        "referrer-policy": "no-referrer",
+        "strict-transport-security": "max-age=31536000;",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN",
+        "x-permitted-cross-domain-policies": "none",
+        "x-xss-protection": "1; mode=block"
+      },
+      "elapsed": 25,
+      "error": null
+    },
+    {
+      "id": "mut-5",
+      "category": "wrongType",
+      "description": "Change \"InputData\" from string to 12345",
+      "fieldPath": "InputData",
+      "expectedStatus": 400,
+      "actualStatus": 200,
+      "statusText": "OK",
+      "pass": false,
+      "requestUrl": "http://beta4-phoenixmobileapis.d2h.com/api/AppTechnician/LMSGetTechnicianDashboardData",
+      "requestMethod": "POST",
+      "requestHeaders": {
+        "Accept": "application/json",
+        "APP_TYPE_ID": "16",
+        "ENTITYID": "964575",
+        "OTP": "711815",
+        "Authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBUFBfVFlQRV9JRCI6IjE2IiwiVVNFUklEIjoiMCIsIk9UUCI6IjcxMTgxNSIsIm5iZiI6MTc3MzIwOTU0NiwiZXhwIjoxNzczMjEwNDQ2LCJpYXQiOjE3NzMyMDk1NDYsImlzcyI6IkRpc2hPVFQiLCJhdWQiOiJEaXNoT1RUIn0.eCUCQJfxbzV2d4dX18J7hmsS2GwIcrGCj4PdwwVGkKI",
+        "APP_VERSION": "5.9.2",
+        "Content-Type": "application/json"
+      },
+      "mutatedBody": {
+        "InputData": 12345
+      },
+      "responseBody": "1tFUaUeSj1pdTiKPfyy76tSGEeuhZbHnCRiSLDE5mir+C0PCDZBi2amiSuV0kT51kSXSXjEZgKvcdhAl0SQ//YolxEHK66hq7Cofu05NwtvwpJxBewel3i4L+XXsyaT96aSD+r9cUMFQvvVgfmqyp47Zj9f1w5auFXz2hYjj/LFnpCM3EvoqhewCfCOIayOs1Jzn4joC2GNuOzMqLjxTuw==",
+      "rawResponseBody": "\"1tFUaUeSj1pdTiKPfyy76tSGEeuhZbHnCRiSLDE5mir+C0PCDZBi2amiSuV0kT51kSXSXjEZgKvcdhAl0SQ//YolxEHK66hq7Cofu05NwtvwpJxBewel3i4L+XXsyaT96aSD+r9cUMFQvvVgfmqyp47Zj9f1w5auFXz2hYjj/LFnpCM3EvoqhewCfCOIayOs1Jzn4joC2GNuOzMqLjxTuw==\"",
+      "responseHeaders": {
+        "cache-control": "no-cache",
+        "content-length": "218",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Wed, 11 Mar 2026 06:25:19 GMT",
+        "expires": "-1",
+        "permissions-policy": "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()",
+        "pragma": "no-cache",
+        "referrer-policy": "no-referrer",
+        "strict-transport-security": "max-age=31536000;",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN",
+        "x-permitted-cross-domain-policies": "none",
+        "x-xss-protection": "1; mode=block"
+      },
+      "elapsed": 25,
+      "error": null
+    },
+    {
+      "id": "mut-6",
+      "category": "wrongType",
+      "description": "Change \"InputData\" from string to true",
+      "fieldPath": "InputData",
+      "expectedStatus": 400,
+      "actualStatus": 200,
+      "statusText": "OK",
+      "pass": false,
+      "requestUrl": "http://beta4-phoenixmobileapis.d2h.com/api/AppTechnician/LMSGetTechnicianDashboardData",
+      "requestMethod": "POST",
+      "requestHeaders": {
+        "Accept": "application/json",
+        "APP_TYPE_ID": "16",
+        "ENTITYID": "964575",
+        "OTP": "711815",
+        "Authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBUFBfVFlQRV9JRCI6IjE2IiwiVVNFUklEIjoiMCIsIk9UUCI6IjcxMTgxNSIsIm5iZiI6MTc3MzIwOTU0NiwiZXhwIjoxNzczMjEwNDQ2LCJpYXQiOjE3NzMyMDk1NDYsImlzcyI6IkRpc2hPVFQiLCJhdWQiOiJEaXNoT1RUIn0.eCUCQJfxbzV2d4dX18J7hmsS2GwIcrGCj4PdwwVGkKI",
+        "APP_VERSION": "5.9.2",
+        "Content-Type": "application/json"
+      },
+      "mutatedBody": {
+        "InputData": true
+      },
+      "responseBody": "1tFUaUeSj1pdTiKPfyy76tSGEeuhZbHnCRiSLDE5mir+C0PCDZBi2amiSuV0kT51kSXSXjEZgKvcdhAl0SQ//YolxEHK66hq7Cofu05NwtvwpJxBewel3i4L+XXsyaT96aSD+r9cUMFQvvVgfmqyp47Zj9f1w5auFXz2hYjj/LFnpCM3EvoqhewCfCOIayOs1Jzn4joC2GNuOzMqLjxTuw==",
+      "rawResponseBody": "\"1tFUaUeSj1pdTiKPfyy76tSGEeuhZbHnCRiSLDE5mir+C0PCDZBi2amiSuV0kT51kSXSXjEZgKvcdhAl0SQ//YolxEHK66hq7Cofu05NwtvwpJxBewel3i4L+XXsyaT96aSD+r9cUMFQvvVgfmqyp47Zj9f1w5auFXz2hYjj/LFnpCM3EvoqhewCfCOIayOs1Jzn4joC2GNuOzMqLjxTuw==\"",
+      "responseHeaders": {
+        "cache-control": "no-cache",
+        "content-length": "218",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Wed, 11 Mar 2026 06:25:19 GMT",
+        "expires": "-1",
+        "permissions-policy": "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()",
+        "pragma": "no-cache",
+        "referrer-policy": "no-referrer",
+        "strict-transport-security": "max-age=31536000;",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN",
+        "x-permitted-cross-domain-policies": "none",
+        "x-xss-protection": "1; mode=block"
+      },
+      "elapsed": 28,
+      "error": null
+    },
+    {
+      "id": "mut-7",
+      "category": "extraField",
+      "description": "Add unknown top-level field \"__unknown_field__\"",
+      "fieldPath": "__unknown_field__",
+      "expectedStatus": 200,
+      "actualStatus": 200,
+      "statusText": "OK",
+      "pass": true,
+      "requestUrl": "http://beta4-phoenixmobileapis.d2h.com/api/AppTechnician/LMSGetTechnicianDashboardData",
+      "requestMethod": "POST",
+      "requestHeaders": {
+        "Accept": "application/json",
+        "APP_TYPE_ID": "16",
+        "ENTITYID": "964575",
+        "OTP": "711815",
+        "Authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBUFBfVFlQRV9JRCI6IjE2IiwiVVNFUklEIjoiMCIsIk9UUCI6IjcxMTgxNSIsIm5iZiI6MTc3MzIwOTU0NiwiZXhwIjoxNzczMjEwNDQ2LCJpYXQiOjE3NzMyMDk1NDYsImlzcyI6IkRpc2hPVFQiLCJhdWQiOiJEaXNoT1RUIn0.eCUCQJfxbzV2d4dX18J7hmsS2GwIcrGCj4PdwwVGkKI",
+        "APP_VERSION": "5.9.2",
+        "Content-Type": "application/json"
+      },
+      "mutatedBody": {
+        "InputData": "zv1rKMz2MwNAVKuvzza8wkD3tRVaHR34WwyaRJKDeLpbvdhjZbYZaHwZMb8v85NIn",
+        "__unknown_field__": "unexpected_value"
+      },
+      "responseBody": "1tFUaUeSj1pdTiKPfyy76tSGEeuhZbHnCRiSLDE5mir+C0PCDZBi2amiSuV0kT51kSXSXjEZgKvcdhAl0SQ//YolxEHK66hq7Cofu05NwtvwpJxBewel3i4L+XXsyaT96aSD+r9cUMFQvvVgfmqyp47Zj9f1w5auFXz2hYjj/LFnpCM3EvoqhewCfCOIayOs1Jzn4joC2GNuOzMqLjxTuw==",
+      "rawResponseBody": "\"1tFUaUeSj1pdTiKPfyy76tSGEeuhZbHnCRiSLDE5mir+C0PCDZBi2amiSuV0kT51kSXSXjEZgKvcdhAl0SQ//YolxEHK66hq7Cofu05NwtvwpJxBewel3i4L+XXsyaT96aSD+r9cUMFQvvVgfmqyp47Zj9f1w5auFXz2hYjj/LFnpCM3EvoqhewCfCOIayOs1Jzn4joC2GNuOzMqLjxTuw==\"",
+      "responseHeaders": {
+        "cache-control": "no-cache",
+        "content-length": "218",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Wed, 11 Mar 2026 06:25:19 GMT",
+        "expires": "-1",
+        "permissions-policy": "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()",
+        "pragma": "no-cache",
+        "referrer-policy": "no-referrer",
+        "strict-transport-security": "max-age=31536000;",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN",
+        "x-permitted-cross-domain-policies": "none",
+        "x-xss-protection": "1; mode=block"
+      },
+      "elapsed": 21,
+      "error": null
+    },
+    {
+      "id": "mut-8",
+      "category": "extraField",
+      "description": "Add unknown top-level numeric field \"__extra_number__\"",
+      "fieldPath": "__extra_number__",
+      "expectedStatus": 200,
+      "actualStatus": 200,
+      "statusText": "OK",
+      "pass": true,
+      "requestUrl": "http://beta4-phoenixmobileapis.d2h.com/api/AppTechnician/LMSGetTechnicianDashboardData",
+      "requestMethod": "POST",
+      "requestHeaders": {
+        "Accept": "application/json",
+        "APP_TYPE_ID": "16",
+        "ENTITYID": "964575",
+        "OTP": "711815",
+        "Authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBUFBfVFlQRV9JRCI6IjE2IiwiVVNFUklEIjoiMCIsIk9UUCI6IjcxMTgxNSIsIm5iZiI6MTc3MzIwOTU0NiwiZXhwIjoxNzczMjEwNDQ2LCJpYXQiOjE3NzMyMDk1NDYsImlzcyI6IkRpc2hPVFQiLCJhdWQiOiJEaXNoT1RUIn0.eCUCQJfxbzV2d4dX18J7hmsS2GwIcrGCj4PdwwVGkKI",
+        "APP_VERSION": "5.9.2",
+        "Content-Type": "application/json"
+      },
+      "mutatedBody": {
+        "InputData": "zv1rKMz2MwNAVKuvzza8wkD3tRVaHR34WwyaRJKDeLpbvdhjZbYZaHwZMb8v85NIn",
+        "__extra_number__": 99999
+      },
+      "responseBody": "1tFUaUeSj1pdTiKPfyy76tSGEeuhZbHnCRiSLDE5mir+C0PCDZBi2amiSuV0kT51kSXSXjEZgKvcdhAl0SQ//YolxEHK66hq7Cofu05NwtvwpJxBewel3i4L+XXsyaT96aSD+r9cUMFQvvVgfmqyp47Zj9f1w5auFXz2hYjj/LFnpCM3EvoqhewCfCOIayOs1Jzn4joC2GNuOzMqLjxTuw==",
+      "rawResponseBody": "\"1tFUaUeSj1pdTiKPfyy76tSGEeuhZbHnCRiSLDE5mir+C0PCDZBi2amiSuV0kT51kSXSXjEZgKvcdhAl0SQ//YolxEHK66hq7Cofu05NwtvwpJxBewel3i4L+XXsyaT96aSD+r9cUMFQvvVgfmqyp47Zj9f1w5auFXz2hYjj/LFnpCM3EvoqhewCfCOIayOs1Jzn4joC2GNuOzMqLjxTuw==\"",
+      "responseHeaders": {
+        "cache-control": "no-cache",
+        "content-length": "218",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Wed, 11 Mar 2026 06:25:19 GMT",
+        "expires": "-1",
+        "permissions-policy": "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()",
+        "pragma": "no-cache",
+        "referrer-policy": "no-referrer",
+        "strict-transport-security": "max-age=31536000;",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN",
+        "x-permitted-cross-domain-policies": "none",
+        "x-xss-protection": "1; mode=block"
+      },
+      "elapsed": 20,
+      "error": null
+    }
+  ],
+  "summary": {
+    "total": 8,
+    "passed": 3,
+    "failed": 5,
+    "errors": 0,
+    "avgResponseTime": 24,
+    "byCategory": {
+      "baseline": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0
+      },
+      "fieldRemoved": {
+        "total": 1,
+        "passed": 0,
+        "failed": 1
+      },
+      "fieldNull": {
+        "total": 1,
+        "passed": 0,
+        "failed": 1
+      },
+      "fieldEmpty": {
+        "total": 1,
+        "passed": 0,
+        "failed": 1
+      },
+      "wrongType": {
+        "total": 2,
+        "passed": 0,
+        "failed": 2
+      },
+      "extraField": {
+        "total": 2,
+        "passed": 2,
+        "failed": 0
+      }
+    }
+  },
+  "request": {
+    "url": "http://beta4-phoenixmobileapis.d2h.com/api/AppTechnician/LMSGetTechnicianDashboardData",
+    "method": "POST",
+    "headers": {
+      "Accept": "application/json",
+      "APP_TYPE_ID": "16",
+      "ENTITYID": "964575",
+      "OTP": "711815",
+      "Authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBUFBfVFlQRV9JRCI6IjE2IiwiVVNFUklEIjoiMCIsIk9UUCI6IjcxMTgxNSIsIm5iZiI6MTc3MzIwOTU0NiwiZXhwIjoxNzczMjEwNDQ2LCJpYXQiOjE3NzMyMDk1NDYsImlzcyI6IkRpc2hPVFQiLCJhdWQiOiJEaXNoT1RUIn0.eCUCQJfxbzV2d4dX18J7hmsS2GwIcrGCj4PdwwVGkKI",
+      "APP_VERSION": "5.9.2",
+      "Content-Type": "application/json"
+    },
+    "originalBody": {
+      "InputData": "zv1rKMz2MwNAVKuvzza8wkD3tRVaHR34WwyaRJKDeLpbvdhjZbYZaHwZMb8v85NIn"
+    }
+  },
+  "startTime": "2026-03-11T06:25:20.198Z",
+  "endTime": "2026-03-11T06:25:20.248Z",
+  "expectations": {
+    "baseline": 200,
+    "fieldRemoved": 400,
+    "fieldNull": 400,
+    "fieldEmpty": 400,
+    "wrongType": 400,
+    "extraField": 200,
+    "emptyBody": 400,
+    "arrayEmpty": 400,
+    "arrayWrongType": 400,
+    "boundaryValue": 400,
+    "sqlInjection": 400,
+    "xssPayload": 400
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  const { results, summary, request, startTime, endTime, expectations } = REPORT_DATA;
+
+  // Meta
+  document.getElementById('reportTime').textContent = '📅 ' + new Date(startTime).toLocaleString();
+  if (startTime && endTime) {
+    const dur = (new Date(endTime) - new Date(startTime)) / 1000;
+    document.getElementById('reportDuration').textContent = '⏱ ' + dur.toFixed(1) + 's total';
+  }
+
+  // Request Info
+  document.getElementById('requestInfo').innerHTML = `
+    <div class="request-info">
+      <h3>Request Details</h3>
+      <p><span class="req-method ${request.method}">${request.method}</span><span class="req-url">${escapeHtml(request.url)}</span></p>
+      <details style="margin-top:12px"><summary style="cursor:pointer;color:#94a3b8">Headers (${Object.keys(request.headers||{}).length})</summary>
+        <pre class="json" style="margin-top:8px">${escapeHtml(JSON.stringify(request.headers, null, 2))}</pre>
+      </details>
+      <details style="margin-top:8px"><summary style="cursor:pointer;color:#94a3b8">Original Body</summary>
+        <pre class="json" style="margin-top:8px">${escapeHtml(JSON.stringify(request.originalBody, null, 2))}</pre>
+      </details>
+    </div>`;
+
+  // Summary Cards
+  const passRate = summary.total > 0 ? ((summary.passed / summary.total) * 100).toFixed(1) : 0;
+  document.getElementById('summaryGrid').innerHTML = `
+    <div class="summary-card total"><div class="value">${summary.total}</div><div class="label">Total Tests</div></div>
+    <div class="summary-card pass"><div class="value">${summary.passed}</div><div class="label">Passed</div></div>
+    <div class="summary-card fail"><div class="value">${summary.failed}</div><div class="label">Failed</div></div>
+    <div class="summary-card time"><div class="value">${summary.avgResponseTime}ms</div><div class="label">Avg Response</div></div>
+    <div class="summary-card" style="border-color:${passRate>=80?'var(--green)':passRate>=50?'var(--yellow)':'var(--red)'}">
+      <div class="value" style="color:${passRate>=80?'var(--green)':passRate>=50?'var(--yellow)':'var(--red)'}">${passRate}%</div>
+      <div class="label">Pass Rate</div>
+    </div>`;
+
+  // Progress Bar
+  const passP = summary.total > 0 ? (summary.passed / summary.total * 100) : 0;
+  const failP = summary.total > 0 ? (summary.failed / summary.total * 100) : 0;
+  document.getElementById('progressBar').innerHTML = `
+    <div class="pass-fill" style="width:${passP}%"></div>
+    <div class="fail-fill" style="width:${failP}%"></div>`;
+
+  // Controls
+  const categories = [...new Set(results.map(r => r.category))];
+  let filterCat = 'all', filterStatus = 'all', searchTerm = '';
+
+  const controlsEl = document.getElementById('controls');
+  controlsEl.innerHTML = `
+    <select id="filterCat"><option value="all">All Categories</option>${categories.map(c => '<option value="'+c+'">'+c+'</option>').join('')}</select>
+    <button class="btn active" data-filter="all">All</button>
+    <button class="btn" data-filter="pass">Passed</button>
+    <button class="btn" data-filter="fail">Failed</button>
+    <input type="text" id="searchInput" placeholder="Search tests..." style="min-width:200px">
+    <span class="count" id="filterCount"></span>`;
+
+  controlsEl.querySelector('#filterCat').addEventListener('change', e => { filterCat = e.target.value; renderResults(); });
+  controlsEl.querySelector('#searchInput').addEventListener('input', e => { searchTerm = e.target.value.toLowerCase(); renderResults(); });
+  controlsEl.querySelectorAll('.btn[data-filter]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      controlsEl.querySelectorAll('.btn[data-filter]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      filterStatus = btn.dataset.filter;
+      renderResults();
+    });
+  });
+
+  function renderResults() {
+    let filtered = results;
+    if (filterCat !== 'all') filtered = filtered.filter(r => r.category === filterCat);
+    if (filterStatus === 'pass') filtered = filtered.filter(r => r.pass);
+    if (filterStatus === 'fail') filtered = filtered.filter(r => !r.pass);
+    if (searchTerm) filtered = filtered.filter(r => r.description.toLowerCase().includes(searchTerm) || (r.fieldPath||'').toLowerCase().includes(searchTerm));
+
+    document.getElementById('filterCount').textContent = `Showing ${filtered.length} of ${results.length}`;
+
+    // Group by category
+    const grouped = {};
+    for (const r of filtered) {
+      if (!grouped[r.category]) grouped[r.category] = [];
+      grouped[r.category].push(r);
+    }
+
+    let html = '';
+    for (const [cat, items] of Object.entries(grouped)) {
+      const catPassed = items.filter(i => i.pass).length;
+      const catFailed = items.length - catPassed;
+      html += `<div class="category-section">
+        <div class="category-header open" onclick="this.classList.toggle('open');this.nextElementSibling.style.display=this.classList.contains('open')?'':'none'">
+          <span class="arrow">&#9654;</span>
+          <span class="cat-name">${cat}</span>
+          <span class="cat-stats"><span class="cat-pass">✓ ${catPassed}</span><span class="cat-fail">✗ ${catFailed}</span><span style="color:var(--text2)">${items.length} tests</span></span>
+        </div>
+        <div><table class="results-table">
+          <thead><tr><th style="width:50px">#</th><th>Test</th><th style="width:100px">Expected</th><th style="width:100px">Actual</th><th style="width:80px">Time</th><th style="width:80px">Result</th></tr></thead>
+          <tbody>${items.map((r, idx) => renderRow(r, idx + 1)).join('')}</tbody>
+        </table></div>
+      </div>`;
+    }
+    if (!html) html = '<div class="no-results">No results match filters</div>';
+    document.getElementById('resultsContainer').innerHTML = html;
+  }
+
+  function renderRow(r, num) {
+    const statusClass = r.actualStatus >= 200 && r.actualStatus < 300 ? 's2xx' : r.actualStatus >= 400 && r.actualStatus < 500 ? 's4xx' : r.actualStatus >= 500 ? 's5xx' : 's0';
+    const resultBadge = r.error ? '<span class="badge error">ERROR</span>' : r.pass ? '<span class="badge pass">PASS</span>' : '<span class="badge fail">FAIL</span>';
+
+    return `<tr onclick="toggleDetail(this)">
+      <td>${num}</td>
+      <td>${escapeHtml(r.description)}</td>
+      <td><span class="status-code">${r.expectedStatus}</span></td>
+      <td><span class="status-code ${statusClass}">${r.actualStatus || 'ERR'}</span></td>
+      <td>${r.elapsed}ms</td>
+      <td>${resultBadge}</td>
+    </tr>
+    <tr><td colspan="6" style="padding:0">
+      <div class="detail-panel" data-detail>
+        <div class="detail-tabs">
+          <div class="detail-tab active" onclick="switchTab(this,'request')">Request</div>
+          <div class="detail-tab" onclick="switchTab(this,'mutated')">Mutated Body</div>
+          <div class="detail-tab" onclick="switchTab(this,'response')">Response</div>
+          <div class="detail-tab" onclick="switchTab(this,'resheaders')">Response Headers</div>
+          ${r.error?'<div class="detail-tab" onclick="switchTab(this,\'error\')">Error</div>':''}
+        </div>
+        <div class="detail-content active" data-tab="request">
+          <div style="margin-bottom:8px;font-size:14px"><strong style="color:var(--cyan)">${escapeHtml(r.requestMethod || '')}</strong> <span style="font-family:monospace;word-break:break-all">${escapeHtml(r.requestUrl || '')}</span></div>
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#64748b;margin-bottom:6px">Request Headers</div>
+          <pre class="json">${escapeHtml(JSON.stringify(r.requestHeaders || {}, null, 2))}</pre>
+        </div>
+        <div class="detail-content" data-tab="mutated"><pre class="json">${escapeHtml(JSON.stringify(r.mutatedBody, null, 2))}</pre></div>
+        <div class="detail-content" data-tab="response"><pre class="json">${escapeHtml(typeof r.responseBody==='string'?r.responseBody:JSON.stringify(r.responseBody, null, 2))}</pre></div>
+        <div class="detail-content" data-tab="resheaders"><pre class="json">${escapeHtml(JSON.stringify(r.responseHeaders, null, 2))}</pre></div>
+        ${r.error?'<div class="detail-content" data-tab="error"><pre class="json" style="color:var(--red)">' + escapeHtml(r.error) + '</pre></div>':''}
+      </div>
+    </td></tr>`;
+  }
+
+  renderResults();
+});
+
+function toggleDetail(row) {
+  const detailRow = row.nextElementSibling;
+  if (!detailRow) return;
+  const panel = detailRow.querySelector('[data-detail]');
+  if (!panel) return;
+  row.classList.toggle('expanded');
+  panel.classList.toggle('show');
+}
+
+function switchTab(tabEl, tabName) {
+  const panel = tabEl.closest('.detail-panel');
+  panel.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+  panel.querySelectorAll('.detail-content').forEach(c => c.classList.remove('active'));
+  tabEl.classList.add('active');
+  panel.querySelector('[data-tab="'+tabName+'"]').classList.add('active');
+}
+
+function escapeHtml(str) {
+  if (str === null || str === undefined) return 'null';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>

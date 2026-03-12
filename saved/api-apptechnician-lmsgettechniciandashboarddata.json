@@ -1,0 +1,52 @@
+{
+  "name": "api/AppTechnician/LMSGetTechnicianDashboardData",
+  "filename": "api-apptechnician-lmsgettechniciandashboarddata.json",
+  "createdAt": "2026-03-11T05:58:52.729Z",
+  "updatedAt": "2026-03-11T13:00:29.233Z",
+  "request": {
+    "url": "http://beta4-phoenixmobileapis.d2h.com/api/AppTechnician/LMSGetTechnicianDashboardData",
+    "method": "POST",
+    "headers": {
+      "Accept": "application/json",
+      "APP_TYPE_ID": "16",
+      "ENTITYID": "964575",
+      "OTP": "711815",
+      "Authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBUFBfVFlQRV9JRCI6IjE2IiwiVVNFUklEIjoiMCIsIk9UUCI6IjcxMTgxNSIsIm5iZiI6MTc3MzIzMzk4OCwiZXhwIjoxNzczMjM0ODg4LCJpYXQiOjE3NzMyMzM5ODgsImlzcyI6IkRpc2hPVFQiLCJhdWQiOiJEaXNoT1RUIn0.qNBPLWWCM-jBgNGdBpIvAkPpoS-C4uEnuzNseokf86Q",
+      "APP_VERSION": "5.9.2",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "InputData": "zv1rKMz2MwNAVKuvzza8wkD3tRVaHR34WwyaRJKDeLpbvdhjZbYZaHwZMb8v85NI"
+    }
+  },
+  "expectations": {
+    "baseline": 200,
+    "fieldRemoved": 400,
+    "fieldNull": 400,
+    "fieldEmpty": 400,
+    "wrongType": 400,
+    "extraField": 200,
+    "emptyBody": 400,
+    "arrayEmpty": 400,
+    "arrayWrongType": 400,
+    "boundaryValue": 400,
+    "sqlInjection": 400,
+    "xssPayload": 400
+  },
+  "fieldOverrides": {},
+  "encryption": {
+    "enabled": true,
+    "key": "p2s5v8y/B?E(H+Kb",
+    "encryptRequest": true,
+    "decryptResponse": true
+  },
+  "mutationConfig": {
+    "fieldRemoved": true,
+    "fieldNull": true,
+    "fieldEmpty": true,
+    "wrongType": true,
+    "extraField": true,
+    "arrayMutations": true,
+    "edgeCases": false
+  }
+}

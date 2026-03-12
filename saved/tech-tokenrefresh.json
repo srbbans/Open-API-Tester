@@ -1,0 +1,50 @@
+{
+  "name": "Tech - TokenRefresh",
+  "filename": "tech-tokenrefresh.json",
+  "createdAt": "2026-03-11T10:21:39.383Z",
+  "updatedAt": "2026-03-11T10:39:26.977Z",
+  "request": {
+    "url": "http://beta4-phoenixmobileapis.d2h.com/api/AppTechnician/ReGenerateToken",
+    "method": "POST",
+    "headers": {
+      "Accept": "application/json",
+      "APP_TYPE_ID": "16",
+      "ENTITYID": "964575",
+      "OTP": "711815",
+      "APP_VERSION": "5.9.2"
+    },
+    "body": {
+      "ExpiredToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBUFBfVFlQRV9JRCI6IjE2IiwiVVNFUklEIjoiMCIsIk9UUCI6IjcxMTgxNSIsIm5iZiI6MTc3MzIyMTU2NywiZXhwIjoxNzczMjIyNDY3LCJpYXQiOjE3NzMyMjE1NjcsImlzcyI6IkRpc2hPVFQiLCJhdWQiOiJEaXNoT1RUIn0.xOvnt30IIsA3cHWgoLxe2PjKendLdDlRkZWNx__668U"
+    }
+  },
+  "expectations": {
+    "baseline": 200,
+    "fieldRemoved": 400,
+    "fieldNull": 400,
+    "fieldEmpty": 400,
+    "wrongType": 400,
+    "extraField": 200,
+    "emptyBody": 400,
+    "arrayEmpty": 400,
+    "arrayWrongType": 400,
+    "boundaryValue": 400,
+    "sqlInjection": 400,
+    "xssPayload": 400
+  },
+  "fieldOverrides": {},
+  "encryption": {
+    "enabled": true,
+    "key": "p2s5v8y/B?E(H+Kb",
+    "encryptRequest": true,
+    "decryptResponse": true
+  },
+  "mutationConfig": {
+    "fieldRemoved": true,
+    "fieldNull": false,
+    "fieldEmpty": false,
+    "wrongType": false,
+    "extraField": false,
+    "arrayMutations": false,
+    "edgeCases": false
+  }
+}
