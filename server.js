@@ -3,6 +3,7 @@
  */
 
 import express from 'express';
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseCurl } from './src/parser/curlParser.js';
@@ -12,6 +13,25 @@ import { buildReportHTML } from './src/report/reportGenerator.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Clean up old reports and saved requests from previous dates
+(function cleanup() {
+  const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+
+  for (const dir of ['reports', 'saved']) {
+    const dirPath = path.join(__dirname, dir);
+    if (!fs.existsSync(dirPath)) continue;
+
+    for (const file of fs.readdirSync(dirPath)) {
+      const filePath = path.join(dirPath, file);
+      const stat = fs.statSync(filePath);
+      const fileDate = stat.mtime.toISOString().slice(0, 10);
+      if (fileDate < today) {
+        fs.unlinkSync(filePath);
+      }
+    }
+  }
+})();
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
